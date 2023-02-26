@@ -1,0 +1,47 @@
+#参考URL: https://reisuta.com/rails-new/
+#参考URL: https://www.youtube.com/watch?v=jbXRxhRBYMk&list=PL9KjJYU5ztx2REiHlhNnLJrLm0ROUp053&index=10
+
+
+#docker立ち上げと同時にrails newコマンドを実行
+docker-compose run web rails new . --force --database=postgresql
+
+
+#最初の一回実行
+docker-compose build
+
+
+
+#出来上がったファイルの中のconfig/database.ymlの内容を下記に書き換える
+///////////////////////////////////////////
+
+default: &default
+  adapter: postgresql
+  encoding: unicode
+  host: db
+  username: postgres
+  password: password
+  pool: 5
+
+development:
+  <<: *default
+  database: myapp_development
+
+
+test:
+  <<: *default
+  database: myapp_test
+
+/////////////////////////////////////////////
+
+
+
+#コンテナを立ち上げる
+docker-compose up -d
+
+
+
+#データベース作成(こちらを使う)
+docker-compose exec web rails db:create
+
+#データベース作成（下記コードはうまくいかないので実行しない）
+docker-compose run web rails db:create
